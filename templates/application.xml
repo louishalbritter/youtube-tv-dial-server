@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<service xmlns="urn:dial-multiscreen-org:schemas:dial">
+  <name>YouTube</name>
+  <options allowStop="true"/>
+  {{ if eq .Proc nil }}
+  <state>stopped</state>
+  {{ else }}
+  <state>running</state>
+  {{ end }}
+  <link rel="run" href="/apps/YouTube/test" />
+</service>
