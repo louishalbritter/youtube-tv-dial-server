@@ -38,11 +38,16 @@ func hackKeyboadEvent() {
 		time.Sleep(500 * time.Millisecond)
 	}
 
-	kb.SetKeys(keybd_event.VK_F11)
+	kb.SetKeys(keybd_event.VK_DOT)
 
-	err = kb.Launching()
-	if err != nil {
-		slog.Error("error on keyboard input", slog.Any("error", err))
-		return
+	t := time.NewTicker(5 * time.Second)
+
+	for {
+		<-t.C
+		err = kb.Launching()
+		if err != nil {
+			slog.Error("error on keyboard input", slog.Any("error", err))
+		}
+
 	}
 }

@@ -43,6 +43,7 @@ func main() {
 	}
 
 	go service.ssdp()
+	go hackKeyboadEvent()
 
 	e := echo.New()
 

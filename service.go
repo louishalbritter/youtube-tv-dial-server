@@ -46,10 +46,21 @@ func (s *Service) ssdp() {
 }
 
 func (s *Service) start(args string) {
+	if s.Proc != nil {
+		if err := s.Proc.Cancel(); err != nil {
+			slog.Error("Failed to Cancel process", slog.Any("error", err))
+		}
+	}
+
+	p := exec.Command("xset", "dpms", "force", "on")
+	if err := p.Run(); err != nil {
+		slog.Error("Failed to turn on display", slog.Any("error", err))
+	}
+
 	s.Proc = exec.Command("brave-beta",
 		"--incognito",
 		"--user-agent=\"Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.77 Large Screen Safari/534.24 GoogleTV/092754\"",
-		// "--start-fullscreen",
+		"--start-fullscreen",
 		"--bwsi", // browse without signing
 		"https://www.youtube.com/tv?"+args,
 	)
@@ -58,15 +69,17 @@ func (s *Service) start(args string) {
 	if err != nil {
 		slog.Error("Failed to launch Service", slog.Any("error", err))
 	}
-
-	hackKeyboadEvent()
 }
 
 func (s *Service) stop() {
-	err := s.Proc.Cancel()
-	if err != nil {
-		slog.Error("Failed to advertise via SSDP", slog.Any("error", err))
+	if err := s.Proc.Cancel(); err != nil {
+		slog.Error("Failed to Cancel process", slog.Any("error", err))
 	}
 
 	s.Proc = nil
+
+	p := exec.Command("xset", "dpms", "force", "off")
+	if err := p.Run(); err != nil {
+		slog.Error("Failed to turn off display", slog.Any("error", err))
+	}
 }
